@@ -1,0 +1,27 @@
+﻿<Window x:Class="CBWPFGUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CBWPFGUI"
+        mc:Ignorable="d"
+        Title="Введите своё имя" Height="145" Width="390" Background="#FF19181B" KeyDown="Window_KeyDown">
+    <Grid Background="#FF404044">
+        <Label x:Name="LabelName" Content="Введите ваше имя:"  Height="24" VerticalAlignment="Top" Width="116" Margin="10,10,194,0" Foreground="White"/>
+
+        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="10" Padding="3,8,0,0" Background="#FF232323" HorizontalAlignment="Left" Height="35" Margin="20,50,0,0" VerticalAlignment="Top" Width="173">
+            <TextBox x:Name="TBNameInput" Margin="0,0,0,0" TextWrapping="Wrap" Text="Меня зовут..." 
+                 VerticalAlignment="Stretch"  BorderThickness="0" Foreground="White" Background="Transparent" BorderBrush="Transparent"/>
+
+        </Border>
+
+        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="10" Height="35" Width="116" Margin="215,50,15,0" HorizontalAlignment="Left" Background="#FF2F3098" 
+                VerticalAlignment="Top">
+            <Button x:Name="ButtonSetName" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="116" BorderBrush="Transparent" 
+                    Background="Transparent" Foreground="White" Click="ButtonSetName_Click" Content="Это мое имя">
+            </Button>
+        </Border>
+
+
+    </Grid>
+</Window>
