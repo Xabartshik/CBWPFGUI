@@ -13,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+//Сделал: Ошлаков Данил, ИВТ-22
 using CBAPI_NS;
 //Позволяет использовать методы класса CBApi без указания CBApi
 using static CBAPI_NS.CBApi;

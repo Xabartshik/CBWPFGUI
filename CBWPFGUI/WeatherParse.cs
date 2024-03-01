@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
+//Сделал: Ошлаков Данил, ИВТ-22
 
 namespace CBWPFGUI
 {
@@ -14,7 +15,7 @@ namespace CBWPFGUI
     {
         public static string GetWeather(string city)
         {
-            // API ключ (заменить на свой)
+            // API ключ
             string api_key = "fb20be23c8ebdec3a848edf912ebf11a";
             // URL API с параметрами
             string api_url = $"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric";
