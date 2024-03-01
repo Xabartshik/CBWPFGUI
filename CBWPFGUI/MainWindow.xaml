@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CBWPFGUI"
         mc:Ignorable="d"
-        Title="Введите своё имя" Height="145" Width="390" Background="#FF19181B" KeyDown="Window_KeyDown">
+        Title="Введите своё имя" Height="145" Width="370" Background="#FF19181B" KeyDown="Window_KeyDown">
     <Grid Background="#FF404044">
         <Label x:Name="LabelName" Content="Введите ваше имя:"  Height="24" VerticalAlignment="Top" Width="116" Margin="10,10,194,0" Foreground="White"/>
 

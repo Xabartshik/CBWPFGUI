@@ -5,19 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CBWPFGUI"
         mc:Ignorable="d"
-        Title="Слушай божественные слова" Height="480" Width="800" KeyDown="WindowCB_KeyDown">
-    <Grid Background="#FF404044">
+        Title="Слушай божественные слова" Height="460" Width="798" KeyDown="WindowCB_KeyDown" Closing="Window_Closing">
+    <Grid Background="#FF404044" Margin="0,0,0,0">
 
-        <Border  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="687,375,0,0" Background="#FF2F3098"  Height="34" Width="81" CornerRadius="10" BorderThickness="1" BorderBrush="Black">
-            <Button x:Name="ButtonSend" BorderThickness="0" Content="Отправить" Background="Transparent" HorizontalAlignment="Left" Height="34" Margin="0,0,0,0" VerticalAlignment="Top" Width="81"  BorderBrush="Transparent"  Foreground="White" Click="ButtonSend_Click" Focusable="False"/>
+        <Border  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="677,355,0,0" Background="#FF2F3098"  Height="51" Width="81" CornerRadius="10" BorderThickness="1" BorderBrush="Black">
+            <Button x:Name="ButtonSend" BorderThickness="0" Content="Отправить" Background="Transparent" HorizontalAlignment="Left" Height="51" Margin="0,0,0,0" VerticalAlignment="Top" Width="81"  BorderBrush="Transparent"  Foreground="White" Click="ButtonSend_Click" Focusable="False"/>
         </Border>
 
-        <Border BorderThickness="1" BorderBrush="Black" Padding ="8,7,20,5" Background="#FF232323" HorizontalAlignment="Left" Height="34" Margin="36,375,0,0" VerticalAlignment="Top" Width="634"  CornerRadius="10">
-            <TextBox x:Name="TBUser" BorderThickness="0" HorizontalAlignment="Left" Height="34" Margin="0,0,0,0" TextWrapping="Wrap" BorderBrush="Transparent" Text="" VerticalAlignment="Top" Width="634" Background="Transparent" Foreground="White" />
+        <Border BorderThickness="1" BorderBrush="Black" Padding ="0,0,0,0" Background="#FF232323" HorizontalAlignment="Left" Height="51" Margin="26,355,0,0" VerticalAlignment="Top" Width="634"  CornerRadius="10">
+            <TextBox x:Name="TBUser" AcceptsReturn="True" BorderThickness="0" Height="51" TextWrapping="Wrap" BorderBrush="Transparent" Text="" VerticalAlignment="Top" Background="Transparent" Foreground="White" Margin="6,0,6,0" />
         </Border>
 
-        <Border BorderBrush="Black" Padding ="20,15,20,10" Background="#FF232323" CornerRadius="30" BorderThickness="1" Margin="0,36,0,0"
-                HorizontalAlignment="Center" Height="318" VerticalAlignment="Top" Width="732" ScrollViewer.VerticalScrollBarVisibility="Hidden" >
+        <Border BorderBrush="Black" Padding ="20,15,20,10" Background="#FF232323" CornerRadius="30" BorderThickness="1" Margin="26,20,0,0"
+                HorizontalAlignment="Left" Height="318" VerticalAlignment="Top" Width="732" ScrollViewer.VerticalScrollBarVisibility="Hidden" >
             <ScrollViewer x:Name="ScrollChat" ScrollViewer.VerticalScrollBarVisibility="Hidden">
                 <StackPanel CanVerticallyScroll="True" x:Name="SPDialogue" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="692" Background="Transparent">
 

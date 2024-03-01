@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
@@ -30,8 +31,20 @@ namespace CBWPFGUI
         string foreground = "#f5f3f2";
         public WindowCB(string nname)
         {
+            CBApi.botName = "Shhh Mi$ery";
             nickname = nname;
             InitializeComponent();
+            //Если есть json, то он выгружается, а сообщения восстанавливаются
+            if (File.Exists(nickname + ".json"))
+            {
+                LoadJson(nickname);
+                foreach (Message message in CBApi.messageStory)
+                {
+                    addMessage(SPDialogue, message, foreground, foreground, userMessageColor, false);
+                    addMessage(SPDialogue, message, foreground, foreground, botMessageColor, true);
+                }
+                ScrollChat.ScrollToEnd();
+            }
         }
         private string nickname;
         /// <summary>
@@ -44,43 +57,66 @@ namespace CBWPFGUI
         /// <param name="TBSFColor"> Цвет шрифта отправителя</param>
         /// <param name="BBColor">Цвет фона сообщения</param>
         /// <param name="Left">ровнение</param>
-        private static void addMessage(StackPanel Panel, string sender, string content, string TBMFColor, string TBSFColor, string BBColor, bool Left)
+        private static void addMessage(StackPanel Panel, Message message, string TBMFColor, string TBSFColor, string BBColor, bool Left)
         {
-            if (content == "")
+            if (message.Content == "")
             {
                 throw new Exception();
             }
             StackPanel messagePanel = new StackPanel();
+            StackPanel messageInfoPanel = new StackPanel()
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(2, 0, 2, 0)
+            };
             Border messageBorder = new Border
             {
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Background = (SolidColorBrush)new BrushConverter().ConvertFrom(BBColor),
-                CornerRadius = new CornerRadius(10),
+                CornerRadius = new CornerRadius(0, 10, 10, 10),
                 Padding = new Thickness(10),
-                Margin = new Thickness(0, 5, 0, 5)
+                Margin = new Thickness(0, 5, 20, 5)
             };
             // Создать TBlock для имени отправителя
             TextBlock TBSender = new TextBlock
             {
-                Text = sender,
+                Text = message.Sender,
                 Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom(TBSFColor),
                 Margin = new Thickness(0, 0, 5, 0)
+            };
+            // Создать TBlock для имени отправителя
+            TextBlock TBTime = new TextBlock
+            {
+                Text = message.Date + ", " + message.Time,
+                Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom(TBSFColor),
+                Margin = new Thickness(10, 0, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Right
             };
             if (Left == false)
             {
                 TBSender.HorizontalAlignment = HorizontalAlignment.Right;
+                TBTime.HorizontalAlignment = HorizontalAlignment.Left;
+                messageInfoPanel.HorizontalAlignment = HorizontalAlignment.Right;
+                messageBorder.HorizontalAlignment = HorizontalAlignment.Right;
+                messageBorder.Margin = new Thickness(20, 5, 0, 5);
+                messageBorder.CornerRadius = new CornerRadius(10, 0, 10, 10);
             }
 
             // Создать TextBlock для сообщения
             TextBlock TBMessage = new TextBlock
             {
                 Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom(TBMFColor),
-                Text = content
+                Text = message.Content,
+                TextWrapping = TextWrapping.Wrap
             };
             // Добавить TBSender и TBMessage в messagePanel
-            messagePanel.Children.Add(TBSender);
+            messageInfoPanel.Children.Add(TBSender);
+            messageInfoPanel.Children.Add(TBTime);
             messageBorder.Child = TBMessage;
             messagePanel.Children.Add(messageBorder);
             // Добавить messagePanel в Panel
+            Panel.Children.Add(messageInfoPanel);
             Panel.Children.Add(messagePanel);
         }
         /// <summary>
@@ -93,71 +129,90 @@ namespace CBWPFGUI
         /// <param name="TBSFColor"> Цвет шрифта отправителя</param>
         /// <param name="BBColor">Цвет фона сообщения</param>
         /// <param name="Left">ровнение</param>
-        /// <param name="wait"> Время ОЖИДАНИЯ в секундах</param>
-        private async static void addMessage(StackPanel Panel, string sender, string content, string TBMFColor, string TBSFColor, string BBColor, bool Left, ulong wait)
+        /// <param name="wait"> Время ОЖИДАНИЯ в секундах</param
+        private async static void addMessage(StackPanel Panel, Message message, string TBMFColor, string TBSFColor, string BBColor, bool Left, ulong wait)
         {
-            if (content == "")
+            if (message.Content == "")
             {
                 throw new Exception();
             }
             StackPanel messagePanel = new StackPanel();
+            StackPanel messageInfoPanel = new StackPanel()
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(2, 0, 2, 0)
+            };
             Border messageBorder = new Border
             {
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Background = (SolidColorBrush)new BrushConverter().ConvertFrom(BBColor),
-                CornerRadius = new CornerRadius(10),
+                CornerRadius = new CornerRadius(0, 10, 10, 10),
                 Padding = new Thickness(10),
-                Margin = new Thickness(0, 5, 0, 5)
+                Margin = new Thickness(0, 5, 20, 5)
             };
             // Создать TBlock для имени отправителя
             TextBlock TBSender = new TextBlock
             {
-                Text = sender,
+                Text = message.Sender,
                 Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom(TBSFColor),
                 Margin = new Thickness(0, 0, 5, 0)
+            };
+            // Создать TBlock для имени отправителя
+            TextBlock TBTime = new TextBlock
+            {
+                Text = message.Date + ", "+ message.Time,
+                Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom(TBSFColor),
+                Margin = new Thickness(10, 0, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Right
             };
             if (Left == false)
             {
                 TBSender.HorizontalAlignment = HorizontalAlignment.Right;
+                TBTime.HorizontalAlignment = HorizontalAlignment.Left;
+                messageInfoPanel.HorizontalAlignment = HorizontalAlignment.Right;
+                messageBorder.HorizontalAlignment = HorizontalAlignment.Right;
+                messageBorder.Margin = new Thickness(20, 5, 0, 5);
+                messageBorder.CornerRadius = new CornerRadius(10, 0, 10, 10);
             }
 
             // Создать TextBlock для сообщения
             TextBlock TBMessage = new TextBlock
             {
                 Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom(TBMFColor),
-                Text = content
+                Text = message.Content,
+                TextWrapping = TextWrapping.Wrap
             };
             // Добавить TBSender и TBMessage в messagePanel
-            messagePanel.Children.Add(TBSender);
+            messageInfoPanel.Children.Add(TBSender);
+            messageInfoPanel.Children.Add(TBTime);
             messageBorder.Child = TBMessage;
             messagePanel.Children.Add(messageBorder);
             // Добавить messagePanel в Panel
-
             await Task.Delay(System.TimeSpan.FromSeconds(wait));
+            Panel.Children.Add(messageInfoPanel);
             Panel.Children.Add(messagePanel);
         }
-
 
         /// <summary>
         /// Отправка сообщения
         /// </summary>
         private void sendDudes()
         {
-            //Проверка на пустоту сообщения
+                addMessage(SPDialogue, CBApi.TransferMessage(nickname, TBUser.Text, true), foreground, foreground, userMessageColor, false);
             try
             {
-                addMessage(SPDialogue, nickname, TBUser.Text, foreground, foreground, userMessageColor, false);
-                addMessage(SPDialogue, "Бот", processMessage(TBUser.Text), foreground, foreground, botMessageColor, true, 1);
-                SPDialogue.CanVerticallyScroll = true;
-                ScrollChat.ScrollToEnd();
-                //TBlMessageStory.Text += TBUser.Text + '\n';
-                //TBlMessageStory.Text += processMessage(TBUser.Text) + '\n';
 
-                //TBUser.Text = "";
+                addMessage(SPDialogue, processMessage(CBApi.TransferMessage(nickname, TBUser.Text, false)), foreground, foreground, botMessageColor, true, 0);
             }
             catch (Exception ex)
             {
-
+                addMessage(SPDialogue, CBApi.TransferMessage(nickname, ex.Message, true), foreground, foreground, botMessageColor, true, 0);
             }
+                SPDialogue.CanVerticallyScroll = true;
+                ScrollChat.ScrollToEnd();
+
+                TBUser.Text = "";
         }
         /// <summary>
         /// Отправка сообщения по нажатию на кнопку
@@ -176,6 +231,14 @@ namespace CBWPFGUI
                 // Ваш код обработчика для сочетания клавиш Ctrl + Enter
                 sendDudes();
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+                SaveMessages(nickname);
+                SaveJson(nickname);
+
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CBAPI_NS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,7 @@ namespace CBWPFGUI
         /// </summary>
         private void start()
         {
-            string nickname = TBNameInput.Text;
+            string nickname = CBApi.SanitizeFilename(TBNameInput.Text);
             WindowCB windowCB = new WindowCB(nickname);
             windowCB.Show();
             this.Close();
