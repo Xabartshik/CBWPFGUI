@@ -9,8 +9,8 @@ using CBWPFGUI;
 namespace CBAPI_NS
 {
     //TODO:
-     /* Парсинг сайта
-     */
+    /* Парсинг сайта
+    */
 
 
     /*В C# ключевое слово internal используется для задания уровня доступа к типам и членам внутри одной сборки. 
@@ -68,7 +68,7 @@ namespace CBAPI_NS
         /// 
         public override string ToString()
         {
-            return Date +" " + Time + " [" + Sender + "] " + Content;
+            return Date + " " + Time + " [" + Sender + "] " + Content;
         }
 
 
@@ -87,7 +87,7 @@ namespace CBAPI_NS
             Message result = new Message(author, content);
             if (addToHistory)
             {
-            messageStory.Add(result);            
+                messageStory.Add(result);
             }
             return result;
         }
@@ -154,18 +154,51 @@ namespace CBAPI_NS
 
         private static Message GetLength(Message toAnswer)
         {
-            return new Message(botName, "Мы с тобой написали уже " + messageStory.Count);
+            return new Message(botName, "Мы с тобой написали уже " + (messageStory.Count + 1) + " сообщений");
         }
 
+        public static List<int> extractInt(string input)
+        {
+            List<int> numbers = new List<int>();
+            string[] parts = leaveDigits(input).Split(' ');
+            foreach (string part in parts)
+            {
+                int value;
+                if (int.TryParse(part, out value))
+                {
+                    numbers.Add(value);
+                }
+            }
+            return numbers;
+        }
+        public static string leaveDigits(string input)
+        {
+            string result = string.Empty;
+            bool prevSpace = false;
+            foreach (char c in input)
+            {
+                if (char.IsDigit(c))
+                {
+                    result += c;
+                    prevSpace = false;
+                }
+                else if (!prevSpace)
+                {
+                    result += ' ';
+                    prevSpace = true;
+                }
+            }
+            return result;
+        }
         private static Message Rand(Message toAnswer)
         {
             List<int> numbers = new List<int>();
-            string answer ="";
+            string answer = "";
             int index = 0;
             Message result = null;
             Regex[] patterns = new Regex[]
             {
-                        new Regex(@"\d*d|д\d{1,}"), // Числа с буквой D и 1 или более цифрами
+                        new Regex(@"\d*(d|д)\d{1,}"), // Числа с буквой D и 1 или более цифрами
                         new Regex(@"\d{1,}\s*\d*")// Числа, разделенные косой чертой
             };
             string check = toAnswer.Content.ToLower();
@@ -179,11 +212,7 @@ namespace CBAPI_NS
                     // Извлечение цифр из найденных совпадений
                     foreach (Match match in matches)
                     {
-                        string[] numberString = match.Value.Replace("d", " ").Split(' ');
-                        foreach (string str in numberString)
-                        {
-                            numbers.Add(int.Parse(str)); 
-                        }
+                        numbers = extractInt(match.Value);
                     }
                     break;
                 }
@@ -235,7 +264,7 @@ namespace CBAPI_NS
                 result = new Message(botName, "Случайное число: " + answer);
             }
             return result;
-            
+
         }
         //Случайное число до maxValue квлючительтно
         public static string GenerateOneRandomNumber(int maxValue)
@@ -269,6 +298,76 @@ namespace CBAPI_NS
             return new Message(botName, WeatherParse.GetWeather("Chita"));
         }
 
+
+        private static Message help(Message toAnswer)
+        {
+            string help = "Привет: Приветствие пользователя" + '\n' + "Пока: Прощание с пользователем"  +'\n' +
+"Как дела? Спрашивает пользователя о его делах" + '\n' +
+"Спасибо: Выражает благодарность пользователю" + '\n' +
+"День недели: Возвращает текущий день недели" + '\n' +
+"Дата: Возвращает текущую дату" + '\n' +
+"Время: Возвращает текущее время" + '\n' +
+"Количество сообщений: Возвращает количество сообщений в чате" + '\n' +
+"Ранд: Генерирует случайное число в указанном диапазоне (например, "+"Ранд 1d20"+" сгенерирует случайное число от 1 до 20)" + '\n' +
+"Погода: Возвращает текущую погоду в Чите" + '\n' +
+"Умножь (*): Умножает два числа (например, Умножь 2 3 вернет 6)" + '\n' +
+"Сложи (+): Складывает два числа (например, Сложи 2 3 вернет 5)" + '\n' +
+"Вычти (-): Вычитает одно число из другого (например, Вычти 5 2 вернет 3)" + '\n' +
+"Раздели (/): Делит одно число на другое (например, Раздели 6 2 вернет 3)"
+                ;
+            return new Message(botName, help);
+        }
+
+        private static Message sum(Message toAnswer)
+        {
+            List<int> list = new List<int>();
+            list = extractInt(toAnswer.Content);
+            string result = "Что-то пошло не так... Проверьте операнды";
+            if (list.Count == 2)
+            {
+                result = "Сумма = " + (list[0] + list[1]).ToString();
+            }
+            return new Message(botName, result);
+        }
+
+        private static Message mul(Message toAnswer)
+        {
+
+            List<int> list = new List<int>();
+            list = extractInt(toAnswer.Content);
+            string result = "Что-то пошло не так... Проверьте операнды";
+            if (list.Count == 2)
+            {
+                result = "Произведение = " + (list[0] * list[1]).ToString();
+            }
+            return new Message(botName, result);
+        }
+
+        private static Message div(Message toAnswer)
+        {
+            List<int> list = new List<int>();
+            list = extractInt(toAnswer.Content);
+            string result = "Что-то пошло не так... Проверьте операнды";
+            if (list.Count == 2)
+            {
+                result = "Целая часть = "+ (list[0] / list[1]).ToString() + "; Остаток = " + (list[0] % list[1]).ToString();
+            }
+            return new Message(botName, result);
+        }
+
+        private static Message sub(Message toAnswer)
+        {
+            List<int> list = new List<int>();
+            list = extractInt(toAnswer.Content);
+            string result = "Что-то пошло не так... Проверьте операнды";
+            if (list.Count == 2)
+            {
+                result = "Разность = " + (list[0] - list[1]).ToString();
+            }
+            return new Message(botName, result);
+        }
+
+
         //Словарь из регулярок и делегатов
         static Dictionary<Regex, AnswerDelegate> checkMethod = new Dictionary<Regex, AnswerDelegate>()
         {
@@ -280,15 +379,20 @@ namespace CBAPI_NS
             { new Regex(@"^.*(сегодн.* числ)|(сегодн.* ден).*$"), GetDate},
             { new Regex(@"^.*(сейчас.* врем)|(сколько.* врем).*$"), GetTime},
             { new Regex(@"^.*((сколько.*)|(число.*) сообщ)|(сколько.* (общаем.)|(говор))|(истор.* сообщ).*$"), GetLength},
-            { new Regex(@"^.*(rand.*)|(roll.*)|(dice.*)|(ранд.*)|(roll.*).*$"), Rand},
+            { new Regex(@"^.*(rand.*)|(roll.*)|(dice.*)|(ранд.*)|(ролл.*).*$"), Rand},
             { new Regex(@"^.*(погод.*)|(окн.*).*$"), getWeather},
+            { new Regex(@"^.*(множ.*)|(\d{1,}\s*\*\s*\d{1,}).*$"), mul},
+            { new Regex(@"^.*(слож.*)|(сум.*)|(\d{1,}\s*\+\s*\d{1,}).*$"), sum},
+            { new Regex(@"^.*(вычти.*)|(вычит.*)|(\d{1,}\s*\-\s*\d{1,}).*$"), sub},
+            { new Regex(@"^.*(деле.*)|(дели.*)|(\d{1,}\s*\/\s*\d{1,}).*$"), div},
+            { new Regex(@"^.*(справ.*)|(помо.*).*$"), help},
         };
 
 
         //Обработка сообщения
-        public static Message processMessage(Message message) 
+        public static Message processMessage(Message message)
         {
-            Message result = null;  
+            Message result = null;
             //Если сообщение пустое
             if (message.Content == "")
             {
@@ -304,7 +408,7 @@ namespace CBAPI_NS
                 {
                     result = checkMethod[regexKey](message);
                     messageStory.Add(result);
-                    return result;                    
+                    return result;
                 }
             }
             result = new Message(botName, "Извини, но я тебя не понимаю");
