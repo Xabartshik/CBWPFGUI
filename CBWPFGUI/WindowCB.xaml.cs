@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -38,10 +39,20 @@ namespace CBWPFGUI
             if (File.Exists(nickname + ".json"))
             {
                 LoadJson(nickname);
+                ulong iter = 0;
                 foreach (Message message in CBApi.messageStory)
                 {
+                    iter++;
+                    if (iter % 2 == 1)
+                    {
                     addMessage(SPDialogue, message, foreground, foreground, userMessageColor, false);
+
+                    }
+                    else
+                    {
+
                     addMessage(SPDialogue, message, foreground, foreground, botMessageColor, true);
+                    }
                 }
                 ScrollChat.ScrollToEnd();
             }
