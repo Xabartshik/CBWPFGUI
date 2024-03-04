@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/CBWPFGUI/WindowCB1.xaml
+/CBWPFGUI/WindowCB — копия.xaml
