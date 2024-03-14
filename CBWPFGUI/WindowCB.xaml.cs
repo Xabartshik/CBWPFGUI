@@ -259,7 +259,7 @@ await может использоваться только с объектами
                 }
                 try
                 {
-
+                //Вывод сообщения от бота
                     addMessage(SPDialogue, processMessage(CBApi.TransferMessage(nickname, TBUser.Text, false)), foreground, foreground, botMessageColor, true, 0);
                 }
                 catch (Exception ex)
