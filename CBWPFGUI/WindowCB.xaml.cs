@@ -38,19 +38,19 @@ namespace CBWPFGUI
             //Если есть json, то он выгружается, а сообщения восстанавливаются
             if (File.Exists(nickname + ".json"))
             {
+                //Загрузка истории сообщений по никнейму пользователя
                 LoadJson(nickname);
                 ulong iter = 0;
                 foreach (Message message in CBApi.messageStory)
                 {
+                    //Если сообщение нечетное -- написал бот, иначе пользователь
                     iter++;
                     if (iter % 2 == 1)
                     {
                     addMessage(SPDialogue, message, foreground, foreground, userMessageColor, false);
-
                     }
                     else
                     {
-
                     addMessage(SPDialogue, message, foreground, foreground, botMessageColor, true);
                     }
                 }
@@ -74,6 +74,7 @@ namespace CBWPFGUI
             {
                 throw new Exception();
             }
+            //Создание панелей для сообщения и информации о сообщении (дата, время, отправитель)
             StackPanel messagePanel = new StackPanel();
             StackPanel messageInfoPanel = new StackPanel()
             {
@@ -81,6 +82,7 @@ namespace CBWPFGUI
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(2, 0, 2, 0)
             };
+            //Создание границ для сообщения (скругление, красивый фон)
             Border messageBorder = new Border
             {
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -104,6 +106,7 @@ namespace CBWPFGUI
                 Margin = new Thickness(10, 0, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Right
             };
+            //Если флаг слева отсутствует, то выравнивание по правой стороне
             if (Left == false)
             {
                 TBSender.HorizontalAlignment = HorizontalAlignment.Right;
@@ -126,12 +129,13 @@ namespace CBWPFGUI
             messageInfoPanel.Children.Add(TBTime);
             messageBorder.Child = TBMessage;
             messagePanel.Children.Add(messageBorder);
-            // Добавить messagePanel в Panel
+            //Вывод сообщений в панель, указанную в параметрах
             Panel.Children.Add(messageInfoPanel);
             Panel.Children.Add(messagePanel);
         }
         /// <summary>
         /// Панель для вставки, Отправитель, Содержимое, Цвет шрифта блока сообщения, Цвет шрифта отправителя, Цвет фона сообщения, Время ОЖИДАНИЯ в секундах
+        /// Асинхронный - вынос отдельных задач из основного потока
         /// </summary>
         /// <param name="Panel">Панель для вставки</param>
         /// <param name="sender">Отправитель</param>
@@ -141,12 +145,35 @@ namespace CBWPFGUI
         /// <param name="BBColor">Цвет фона сообщения</param>
         /// <param name="Left">ровнение</param>
         /// <param name="wait"> Время ОЖИДАНИЯ в секундах</param
+        /*
+         Async и await в C# используются для написания асинхронного кода. Давайте разберемся, что это значит:
+
+Асинхронный код:
+
+Позволяет программе выполнять несколько операций одновременно, не блокируя основной поток выполнения.
+Часто используется для задач, связанных с вводом-выводом (I/O), например, сетевыми запросами или чтением/записью файлов.
+Такие операции могут занимать время, и асинхронный код позволяет программе продолжать работу, не дожидаясь их завершения.
+
+async:
+
+Ключевое слово async используется для объявления метода асинхронным.
+Это сообщает компилятору, что метод может содержать операции, которые могут быть приостановлены и возобновлены позже.
+Асинхронный метод должен возвращать Task или Task<T>, где T - тип возвращаемого значения.
+
+await:
+
+Ключевое слово await используется внутри асинхронного метода для приостановки его выполнения, пока ожидаемая асинхронная операция не завершится.
+await может использоваться только с объектами типа Task или Task<T>.
+Когда асинхронная операция завершается, управление возвращается в асинхронный метод, и выполнение продолжается с инструкции после await.
+         
+         */
         private async static void addMessage(StackPanel Panel, Message message, string TBMFColor, string TBSFColor, string BBColor, bool Left, ulong wait)
         {
             if (message.Content == "")
             {
                 throw new Exception();
             }
+            //Создание панелей для сообщения и информации о сообщении (дата, время, отправитель)
             StackPanel messagePanel = new StackPanel();
             StackPanel messageInfoPanel = new StackPanel()
             {
@@ -154,6 +181,7 @@ namespace CBWPFGUI
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(2, 0, 2, 0)
             };
+            //Создание границ для сообщения (скругление, красивый фон)
             Border messageBorder = new Border
             {
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -177,6 +205,7 @@ namespace CBWPFGUI
                 Margin = new Thickness(10, 0, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Right
             };
+            //Если флаг слева отсутствует, то выравнивание по правой стороне
             if (Left == false)
             {
                 TBSender.HorizontalAlignment = HorizontalAlignment.Right;
@@ -200,7 +229,9 @@ namespace CBWPFGUI
             messageBorder.Child = TBMessage;
             messagePanel.Children.Add(messageBorder);
             // Добавить messagePanel в Panel
+            //Приостановка выполнения, пока не подождет wait секунд
             await Task.Delay(System.TimeSpan.FromSeconds(wait));
+            //Вывод сообщений в панель, указанную в параметрах
             Panel.Children.Add(messageInfoPanel);
             Panel.Children.Add(messagePanel);
         }
@@ -208,22 +239,37 @@ namespace CBWPFGUI
         /// <summary>
         /// Отправка сообщения
         /// </summary>
-        private void sendDudes()
-        {
-                addMessage(SPDialogue, CBApi.TransferMessage(nickname, TBUser.Text, true), foreground, foreground, userMessageColor, false);
-            try
-            {
 
-                addMessage(SPDialogue, processMessage(CBApi.TransferMessage(nickname, TBUser.Text, false)), foreground, foreground, botMessageColor, true, 0);
-            }
-            catch (Exception ex)
-            {
-                addMessage(SPDialogue, CBApi.TransferMessage(nickname, ex.Message, true), foreground, foreground, botMessageColor, true, 0);
-            }
+        private void sendMessage()
+        {
+
+            //Добавление сообщения от пользователя
+            //Проверка сообщений. Если случится ошибка, то выводится сообщение об ошибке
+                try
+                {
+
+                    addMessage(SPDialogue, CBApi.TransferMessage(nickname, TBUser.Text, true), foreground, foreground, userMessageColor, false);
+                }
+                catch (Exception ex)
+                {
+
+                    addMessage(SPDialogue, CBApi.TransferMessage(nickname, ex.Message, true), foreground, foreground, userMessageColor, false);
+                }
+                try
+                {
+
+                    addMessage(SPDialogue, processMessage(CBApi.TransferMessage(nickname, TBUser.Text, false)), foreground, foreground, botMessageColor, true, 0);
+                }
+                catch (Exception ex)
+                {
+                    addMessage(SPDialogue, CBApi.TransferMessage(nickname, ex.Message, true), foreground, foreground, botMessageColor, true, 0);
+                }
                 SPDialogue.CanVerticallyScroll = true;
                 ScrollChat.ScrollToEnd();
 
                 TBUser.Text = "";
+            
+
         }
         /// <summary>
         /// Отправка сообщения по нажатию на кнопку
@@ -232,7 +278,7 @@ namespace CBWPFGUI
         /// <param name="e"></param>
         private void ButtonSend_Click(object sender, RoutedEventArgs e)
         {
-                sendDudes();
+            sendMessage();
         }
         //Отправка сообщения хоткеем
         private void WindowCB_KeyDown(object sender, KeyEventArgs e)
@@ -240,13 +286,14 @@ namespace CBWPFGUI
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.Enter)
             {
                 // Ваш код обработчика для сочетания клавиш Ctrl + Enter
-                sendDudes();
+                sendMessage();
             }
         }
-
+        ///Сохранение истории при закрытие окна
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
+            //Сохранить сообщения в текстовый файл и в JSON
                 SaveMessages(nickname);
                 SaveJson(nickname);
 

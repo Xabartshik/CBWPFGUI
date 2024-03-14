@@ -5,12 +5,13 @@ using System.Text.RegularExpressions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CBWPFGUI;
+using static CBAPI_NS.CBApi;
+
+
 //Сделал: Ошлаков Данил, ИВТ-22
 namespace CBAPI_NS
 {
-    //TODO:
-    /* Парсинг сайта
-    */
+
 
 
     /*В C# ключевое слово internal используется для задания уровня доступа к типам и членам внутри одной сборки. 
@@ -31,7 +32,7 @@ namespace CBAPI_NS
         public string Time { get; set; }
         //Отправитель. Указывается строкой для того чтобы записывать в лог и выводить при необходимости в сообщении
         public string Sender { get; set; }
-
+        //Получение времени отправки сообщения
         public static string getTime()
         {
             DateTime currentTime = DateTime.Now;
@@ -54,6 +55,7 @@ namespace CBAPI_NS
             Time = time;
             Sender = sender;
         }
+        //Конструктор с автором и контентом
         public Message(string author, string newContent)
         {
             Content = newContent;
@@ -62,7 +64,7 @@ namespace CBAPI_NS
             Time = getTime();
         }
         /// <summary>
-        /// Возвращает время отправки, дату и содержимое сообщения
+        /// Возвращает время отправки, автора, дату и содержимое сообщения
         /// </summary>
         /// <returns> </returns>
         /// 
@@ -73,6 +75,11 @@ namespace CBAPI_NS
 
 
     }
+
+
+
+    // todo: КОММЕНТАРИИ
+    // Переделать в матрицу
     class CBApi
     {
         ///По моей логике, лучше бы сохранять историю сообщений как поле бота, нежели класса окна. Бот один, история сообщений хранится в нем, все хорошо
@@ -91,6 +98,8 @@ namespace CBAPI_NS
             }
             return result;
         }
+
+
         //Удаление из строки опасных символов
         public static string SanitizeFilename(string filename)
         {
@@ -102,8 +111,11 @@ namespace CBAPI_NS
             }
             return sanitizedFilename;
         }
+
         //Делегат для методов ответа на сообщения
         public delegate Message AnswerDelegate(Message arg);
+
+
         //Различные методы для ответа на сообщения. Все ясно из названий
         static private Message hello(Message toAnswer)
         {
@@ -112,51 +124,52 @@ namespace CBAPI_NS
             return result;
 
         }
+        //Вывести вопрос как дела?
         static private Message howAreYou(Message toAnswer)
         {
             string botAnswer = $"У меня всё хорошо, спасибо! А как твои дела, {toAnswer.Sender}?";
             Message result = new Message(botName, botAnswer);
             return result;
         }
-
+        //Вывести ответ на благодарность
         static private Message thankYou(Message toAnswer)
         {
             string botAnswer = $"Пожалуйста, {toAnswer.Sender}! Рад был помочь.";
             Message result = new Message(botName, botAnswer);
             return result;
         }
-
+        //Вывести прощание
         static private Message bye(Message toAnswer)
         {
             string botAnswer = $"До свидания, {toAnswer.Sender}! Было приятно общаться.";
             Message result = new Message(botName, botAnswer);
             return result;
         }
-
+        //Вывести день недели
         private static Message GetDayOfWeek(Message toAnswer)
         {
             DateTime today = DateTime.Now;
             string[] daysOfWeek = { "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" };
             return new Message(botName, "Сегодня " + daysOfWeek[(int)today.DayOfWeek]);
         }
-
+        //Вывести Дату на текущий момент
         private static Message GetDate(Message toAnswer)
         {
             DateTime today = DateTime.Now;
             string[] daysOfWeek = { "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" };
             return new Message(botName, "Сегодня " + Message.GetFormattedDate() + ", " + daysOfWeek[(int)today.DayOfWeek]);
         }
-
+        //Получение времени на текущий момент
         private static Message GetTime(Message toAnswer)
         {
             return new Message(botName, "Сейчас " + Message.getTime());
         }
-
+        //Получить число отправленных сообщений
         private static Message GetLength(Message toAnswer)
         {
             return new Message(botName, "Мы с тобой написали уже " + (messageStory.Count + 1) + " сообщений");
         }
-
+        //Извлечь числа
         public static List<int> extractInt(string input)
         {
             List<int> numbers = new List<int>();
@@ -171,6 +184,7 @@ namespace CBAPI_NS
             }
             return numbers;
         }
+        //Оставить только числа в строке
         public static string leaveDigits(string input)
         {
             string result = string.Empty;
@@ -190,6 +204,7 @@ namespace CBAPI_NS
             }
             return result;
         }
+        //Рандомайзер для числа в пределах, несколько чисел суммой, просто число
         private static Message Rand(Message toAnswer)
         {
             List<int> numbers = new List<int>();
@@ -206,6 +221,7 @@ namespace CBAPI_NS
             // Извлечение цифр из найденных совпадений
             foreach (Regex pattern in patterns)
             {
+                //Перебор значений, чтобы понять, какая ситуация
                 MatchCollection matches = pattern.Matches(check);
                 if (matches.Count > 0)
                 {
@@ -229,6 +245,7 @@ namespace CBAPI_NS
                         // Один элемент в списке
                         answer = GenerateOneRandomNumber(numbers[0]);
                     }
+                    //Генерация суммы случайных чисел
                     else if (numbers.Count == 2)
                     {
                         // Два элемента в списке
@@ -292,13 +309,13 @@ namespace CBAPI_NS
             Random random = new Random();
             return random.Next(minValue, maxValue + 1).ToString();
         }
-
+        //Вывести погоду в Чите
         private static Message getWeather(Message toAnswer)
         {
             return new Message(botName, WeatherParse.GetWeather("Chita"));
         }
 
-
+        //Вывести справку
         private static Message help(Message toAnswer)
         {
             string help = "Привет: Приветствие пользователя" + '\n' + "Пока: Прощание с пользователем"  +'\n' +
@@ -317,7 +334,7 @@ namespace CBAPI_NS
                 ;
             return new Message(botName, help);
         }
-
+        //Вывести сумму двух чисел
         private static Message sum(Message toAnswer)
         {
             List<int> list = new List<int>();
@@ -329,7 +346,7 @@ namespace CBAPI_NS
             }
             return new Message(botName, result);
         }
-
+        //Вывести произведение двух чисел
         private static Message mul(Message toAnswer)
         {
 
@@ -342,7 +359,7 @@ namespace CBAPI_NS
             }
             return new Message(botName, result);
         }
-
+        //Вывести частное и остаток двух чисел
         private static Message div(Message toAnswer)
         {
             List<int> list = new List<int>();
@@ -354,7 +371,7 @@ namespace CBAPI_NS
             }
             return new Message(botName, result);
         }
-
+        //Вывести разницу двух чисел
         private static Message sub(Message toAnswer)
         {
             List<int> list = new List<int>();
@@ -367,59 +384,133 @@ namespace CBAPI_NS
             return new Message(botName, result);
         }
 
+        ////Переписать под матрицу
+        ////Словарь из регулярок и делегатов
+        //static Dictionary<Regex, AnswerDelegate> checkMethod = new Dictionary<Regex, AnswerDelegate>()
+        //{
+        //    { new Regex(@"^.*(привет)|(здравствуй.{0,2}).*$"), hello},
+        //    { new Regex(@"^.*(пока)|(свид.*).*$"), bye},
+        //    { new Regex(@"^.*(как.* дела)|(как жи.*).*$"), howAreYou},
+        //    { new Regex(@"^.*(благод)|(спасиб).*$"), thankYou},
+        //    { new Regex(@"^.*(день недел).*$"), GetDayOfWeek},
+        //    { new Regex(@"^.*(сегодн.* числ)|(сегодн.* ден).*$"), GetDate},
+        //    { new Regex(@"^.*(сейчас.* врем)|(сколько.* врем).*$"), GetTime},
+        //    { new Regex(@"^.*((сколько.*)|(число.*) сообщ)|(сколько.* (общаем.)|(говор))|(истор.* сообщ).*$"), GetLength},
+        //    { new Regex(@"^.*(rand.*)|(roll.*)|(dice.*)|(ранд.*)|(ролл.*).*$"), Rand},
+        //    { new Regex(@"^.*(погод.*)|(окн.*).*$"), getWeather},
+        //    { new Regex(@"^.*(множ.*)|(\d{1,}\s*\*\s*\d{1,}).*$"), mul},
+        //    { new Regex(@"^.*(слож.*)|(сум.*)|(\d{1,}\s*\+\s*\d{1,}).*$"), sum},
+        //    { new Regex(@"^.*(вычти.*)|(вычит.*)|(\d{1,}\s*\-\s*\d{1,}).*$"), sub},
+        //    { new Regex(@"^.*(деле.*)|(дели.*)|(\d{1,}\s*\/\s*\d{1,}).*$"), div},
+        //    { new Regex(@"^.*(справ.*)|(помо.*).*$"), help},
+        //};
 
-        //Словарь из регулярок и делегатов
-        static Dictionary<Regex, AnswerDelegate> checkMethod = new Dictionary<Regex, AnswerDelegate>()
+
+        ////Обработка сообщения
+        //public static Message processMessage(Message message)
+        //{
+        //    Message result = null;
+        //    //Если сообщение пустое
+        //    if (message.Content == "")
+        //    {
+        //        throw new ArgumentException();
+        //    }
+        //    //Перебор ключей regexKey в ключах словаря
+        //    foreach (var regexKey in checkMethod.Keys)
+        //    {
+        //        //Проверка, подходит ли строка шаблону
+        //        Match match = regexKey.Match(message.Content.ToLower());
+        //        //Если шаблон подошел, то возвращаем
+        //        if (match.Success)
+        //        {
+        //            result = checkMethod[regexKey](message);
+        //            messageStory.Add(result);
+        //            return result;
+        //        }
+        //    }
+        //    result = new Message(botName, "Извини, но я тебя не понимаю");
+        //    messageStory.Add(result);
+        //    return result;
+        //}
+        static Regex[] regexes = new Regex[]
         {
-            { new Regex(@"^.*(привет)|(здравствуй.{0,2}).*$"), hello},
-            { new Regex(@"^.*(пока)|(свид.*).*$"), bye},
-            { new Regex(@"^.*(как.* дела)|(как жи.*).*$"), howAreYou},
-            { new Regex(@"^.*(благод)|(спасиб).*$"), thankYou},
-            { new Regex(@"^.*(день недел).*$"), GetDayOfWeek},
-            { new Regex(@"^.*(сегодн.* числ)|(сегодн.* ден).*$"), GetDate},
-            { new Regex(@"^.*(сейчас.* врем)|(сколько.* врем).*$"), GetTime},
-            { new Regex(@"^.*((сколько.*)|(число.*) сообщ)|(сколько.* (общаем.)|(говор))|(истор.* сообщ).*$"), GetLength},
-            { new Regex(@"^.*(rand.*)|(roll.*)|(dice.*)|(ранд.*)|(ролл.*).*$"), Rand},
-            { new Regex(@"^.*(погод.*)|(окн.*).*$"), getWeather},
-            { new Regex(@"^.*(множ.*)|(\d{1,}\s*\*\s*\d{1,}).*$"), mul},
-            { new Regex(@"^.*(слож.*)|(сум.*)|(\d{1,}\s*\+\s*\d{1,}).*$"), sum},
-            { new Regex(@"^.*(вычти.*)|(вычит.*)|(\d{1,}\s*\-\s*\d{1,}).*$"), sub},
-            { new Regex(@"^.*(деле.*)|(дели.*)|(\d{1,}\s*\/\s*\d{1,}).*$"), div},
-            { new Regex(@"^.*(справ.*)|(помо.*).*$"), help},
+            new Regex(@"^.*(привет)|(здравствуй.{0,2}).*$"),
+            new Regex(@"^.*(пока)|(свид.*).*$"),
+            new Regex(@"^.*(как.* дела)|(как жи.*).*$"),
+            new Regex(@"^.*(благод)|(спасиб).*$"),
+            new Regex(@"^.*(день недел).*$"),
+            new Regex(@"^.*(сегодн.* числ)|(сегодн.* ден).*$"),
+            new Regex(@"^.*(сейчас.* врем)|(сколько.* врем).*$"),
+            new Regex(@"^.*((сколько.*)|(число.*) сообщ)|(сколько.* (общаем.)|(говор))|(истор.* сообщ).*$"),
+            new Regex(@"^.*(rand.*)|(roll.*)|(dice.*)|(ранд.*)|(ролл.*).*$"),
+            new Regex(@"^.*(погод.*)|(окн.*).*$"),
+            new Regex(@"^.*(множ.*)|(\d{1,}\s*\*\s*\d{1,}).*$"),
+            new Regex(@"^.*(слож.*)|(сум.*)|(\d{1,}\s*\+\s*\d{1,}).*$"),
+            new Regex(@"^.*(вычти.*)|(вычит.*)|(\d{1,}\s*\-\s*\d{1,}).*$"),
+            new Regex(@"^.*(деле.*)|(дели.*)|(\d{1,}\s*\/\s*\d{1,}).*$"),
+            new Regex(@"^.*(справ.*)|(помо.*).*$"),
         };
 
-
-        //Обработка сообщения
+        static AnswerDelegate[] answerDelegates = new AnswerDelegate[]
+        {
+            hello,
+            bye,
+            howAreYou,
+            thankYou,
+            GetDayOfWeek,
+            GetDate,
+            GetTime,
+            GetLength,
+            Rand,
+            getWeather,
+            mul,
+            sum,
+            sub,
+            div,
+            help,
+        };
         public static Message processMessage(Message message)
         {
+            // Инициализация ответа
             Message result = null;
-            //Если сообщение пустое
-            if (message.Content == "")
+
+            // Проверка на пустое сообщение
+            if (string.IsNullOrEmpty(message.Content))
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Пустое сообщение");
             }
-            //Перебор ключей regexKey в ключах словаря
-            foreach (var regexKey in checkMethod.Keys)
+
+            // Преобразование сообщения в нижний регистр
+            string lowerContent = message.Content.ToLower();
+
+            // Перебор regexes
+            for (int i = 0; i < regexes.Length; i++)
             {
-                //Проверка, подходит ли строка шаблону
-                Match match = regexKey.Match(message.Content.ToLower());
-                //Если шаблон подошел, то возвращаем
-                if (match.Success)
+                // Проверка, подходит ли regex
+                if (regexes[i].Match(lowerContent).Success)
                 {
-                    result = checkMethod[regexKey](message);
+                    // Вызов делегата и возврат результата
+                    Message result_messsage = answerDelegates[i].Invoke(message);
+                    result = result_messsage;
                     messageStory.Add(result);
                     return result;
                 }
             }
+
+            // Если ни один regex не подошел, то формируем ответ о непонимании
             result = new Message(botName, "Извини, но я тебя не понимаю");
             messageStory.Add(result);
+
             return result;
         }
-        //Сохранение сообщений в файл текстовый
+
+
+        /// Сохранение сообщений в файл текстовый
         public static void SaveMessages(string nickname)
         {
             try
             {
+                //Использование StreamWriter для записи сообщений в текстовый файл
                 using (StreamWriter writer = new StreamWriter(nickname + ".txt"))
                 {
                     foreach (Message message in messageStory)
@@ -428,6 +519,7 @@ namespace CBAPI_NS
                     }
                 }
             }
+            //Если записать не удалось
             catch (Exception ex)
             {
                 throw new Exception("Не удалось сохранить сообщения", ex);
@@ -439,6 +531,7 @@ namespace CBAPI_NS
         {
             try
             {
+                //Использование сериализатора
                 JsonSerializerOptions options = new JsonSerializerOptions
                 {
                     WriteIndented = true

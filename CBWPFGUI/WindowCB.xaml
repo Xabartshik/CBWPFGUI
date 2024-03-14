@@ -1,4 +1,185 @@
-﻿<Window x:Class="CBWPFGUI.WindowCB"
+﻿<!-- Корневой элемент окна --><!--
+<Window x:Class="CBWPFGUI.WindowCB"
+        --><!-- Пространство имен XML --><!--
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    --><!-- Пространство имен XAML --><!--
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    --><!-- Пространство имен Blend --><!--
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    --><!-- Пространство имен совместимости с OpenXML --><!--
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    --><!-- Пространство имен локальных классов --><!--
+    xmlns:local="clr-namespace:CBWPFGUI"
+    --><!-- Игнорировать элементы Blend --><!--
+    mc:Ignorable="d"
+    --><!-- Заголовок окна --><!--
+    Title="Слушай божественные слова"
+    --><!-- Высота окна --><!--
+    Height="460"
+    --><!-- Ширина окна --><!--
+    Width="798"
+    --><!-- Обработчик события нажатия клавиши --><!--
+    KeyDown="WindowCB_KeyDown"
+    --><!-- Обработчик события закрытия окна --><!--
+    Closing="Window_Closing">
+    --><!-- Граница --><!--
+    <Border  
+    --><!-- Горизонтальное выравнивание --><!--
+        HorizontalAlignment="Left"
+        --><!-- Вертикальное выравнивание --><!--
+        VerticalAlignment="Top"
+        --><!-- Отступы --><!--
+        Margin="677,355,0,0"
+        --><!-- Цвет фона --><!--
+        Background="#FF2F3098"
+        --><!-- Высота --><!--
+        Height="51"
+        --><!-- Ширина --><!--
+        Width="81"
+        --><!-- Радиус скругления углов --><!--
+        CornerRadius="10"
+        --><!-- Толщина рамки --><!--
+        BorderThickness="1"
+        --><!-- Цвет рамки --><!--
+        BorderBrush="Black">
+        --><!-- Кнопка внутри границы --><!--
+        <Button 
+        --><!-- Имя кнопки --><!--
+            x:Name="ButtonSend"
+            --><!-- Толщина рамки --><!--
+            BorderThickness="0"
+            --><!-- Текст кнопки --><!--
+            Content="Отправить"
+            --><!-- Цвет фона --><!--
+            Background="Transparent"
+            --><!-- Горизонтальное выравнивание --><!--
+            HorizontalAlignment="Left"
+            --><!-- Высота --><!--
+            Height="51"
+            --><!-- Отступы --><!--
+            Margin="0,0,0,0"
+            --><!-- Вертикальное выравнивание --><!--
+            VerticalAlignment="Top"
+            --><!-- Ширина --><!--
+            Width="81"
+            --><!-- Цвет рамки --><!--
+            BorderBrush="Transparent"
+            --><!-- Цвет текста --><!--
+            Foreground="White"
+            --><!-- Обработчик события нажатия кнопки --><!--
+            Click="ButtonSend_Click"
+            --><!-- Возможность фокусировки --><!--
+            Focusable="False"/>
+    </Border>
+    --><!-- Граница --><!--
+    <Border 
+    --><!-- Толщина рамки --><!--
+        BorderThickness="1"
+        --><!-- Цвет рамки --><!--
+        BorderBrush="Black"
+        --><!-- Отступы внутри границы --><!--
+        Padding ="0,0,0,0"
+        --><!-- Цвет фона --><!--
+        Background="#FF232323"
+        --><!-- Горизонтальное выравнивание --><!--
+        HorizontalAlignment="Left"
+        --><!-- Высота --><!--
+        Height="51"
+        --><!-- Отступы --><!--
+        Margin="26,355,0,0"
+        --><!-- Вертикальное выравнивание --><!--
+        VerticalAlignment="Top"
+        --><!-- Ширина --><!--
+        Width="634"
+        --><!-- Радиус скругления углов --><!--
+        CornerRadius="10">
+        --><!-- Текстовое поле внутри границы --><!--
+        <TextBox 
+        --><!-- Имя текстового поля --><!--
+            x:Name="TBUser"
+            --><!-- Разрешение переноса строк --><!--
+            AcceptsReturn="True"
+            --><!-- Толщина рамки --><!--
+            BorderThickness="0"
+            --><!-- Высота --><!--
+            Height="51"
+            --><!-- Разрешение переноса текста --><!--
+            TextWrapping="Wrap"
+            --><!-- Цвет рамки --><!--
+            BorderBrush="Transparent"
+            --><!-- Текст по умолчанию --><!--
+            Text=""
+            --><!-- Вертикальное выравнивание --><!--
+            VerticalAlignment="Top"
+            --><!-- Цвет фона --><!--
+            Background="Transparent"
+            --><!-- Цвет текста --><!--
+            Foreground="White"
+            --><!-- Отступы --><!--
+            Margin="6,0,6,0" />
+    </Border>
+    --><!-- Граница --><!--
+    <Border 
+    --><!-- Цвет рамки --><!--
+        BorderBrush="Black"
+        --><!-- Отступы внутри границы --><!--
+        Padding ="20,15,20,10"
+        --><!-- Цвет фона --><!--
+        Background="#FF232323"
+        --><!-- Радиус скругления углов --><!--
+        CornerRadius="30"
+        --><!-- Толщина рамки --><!--
+        BorderThickness="1"
+        --><!-- Отступы --><!--
+        Margin="26,20,0,0"
+        --><!-- Горизонтальное выравнивание --><!--
+        HorizontalAlignment="Left"
+        --><!-- Высота --><!--
+        Height="318"
+        --><!-- Вертикальное выравнивание --><!--
+        VerticalAlignment="Top"
+        --><!-- Ширина --><!--
+        Width="732"
+        --><!-- Скрытие вертикального скроллбара --><!--
+        ScrollViewer.VerticalScrollBarVisibility="Hidden" >
+        --><!-- Скроллвьюер --><!--
+        <ScrollViewer 
+        --><!-- Имя скроллвьюера --><!--
+            x:Name="ScrollChat"
+            --><!-- Скрытие вертикального скроллбара --><!--
+            ScrollViewer.VerticalScrollBarVisibility="Hidden">
+            --><!-- Панель стека --><!--
+            <StackPanel 
+            --><!-- Возможность вертикальной прокрутки --><!--
+                CanVerticallyScroll="True"
+                --><!-- Имя панели стека --><!--
+                x:Name="SPDialogue"
+                --><!-- Горизонтальное выравнивание --><!--
+                HorizontalAlignment="Left"
+                --><!-- Отступы --><!--
+                Margin="0,0,0,0"
+                --><!-- Вертикальное выравнивание --><!--
+                VerticalAlignment="Stretch"
+                --><!-- Ширина --><!--
+                Width="692"
+                --><!-- Цвет фона --><!--
+                Background="Transparent">
+
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Border>
+
+    </Grid>
+</Window>-->
+
+
+
+
+
+
+<Window x:Class="CBWPFGUI.WindowCB"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,6 +187,7 @@
         xmlns:local="clr-namespace:CBWPFGUI"
         mc:Ignorable="d"
         Title="Слушай божественные слова" Height="460" Width="798" KeyDown="WindowCB_KeyDown" Closing="Window_Closing">
+    
     <Grid Background="#FF404044" Margin="0,0,0,0">
 
         <Border  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="677,355,0,0" Background="#FF2F3098"  Height="51" Width="81" CornerRadius="10" BorderThickness="1" BorderBrush="Black">
