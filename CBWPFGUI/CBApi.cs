@@ -211,10 +211,12 @@ namespace CBAPI_NS
             string answer = "";
             int index = 0;
             Message result = null;
+            //Проверка, совпадает ли регулярное выражение (проверка на сообщеение типа 20д20, а также просто несколько чисел)
+            //Здесь массив из возможных шаблонов
             Regex[] patterns = new Regex[]
             {
                         new Regex(@"\d*(d|д)\d{1,}"), // Числа с буквой D и 1 или более цифрами
-                        new Regex(@"\d{1,}\s*\d*")// Числа, разделенные косой чертой
+                        new Regex(@"\d{1,}\s*\d*")// Числа, разделенные пробелами
             };
             string check = toAnswer.Content.ToLower();
             check = check.Replace("ранд ", "");
@@ -272,6 +274,7 @@ namespace CBAPI_NS
                 default:
                     throw new Exception("Неверный формат команды!");
             }
+            //Если 
             if (index == (patterns.Length))
             {
                 result = new Message(botName, "Что-то пошло не так... Проверь написание команды");
@@ -432,6 +435,7 @@ namespace CBAPI_NS
         //    messageStory.Add(result);
         //    return result;
         //}
+        //Массив из регулярных выражений. Используется для подбора правильного метода для реакции на сообщение
         static Regex[] regexes = new Regex[]
         {
             new Regex(@"^.*(привет)|(здравствуй.{0,2}).*$"),
@@ -450,7 +454,8 @@ namespace CBAPI_NS
             new Regex(@"^.*(деле.*)|(дели.*)|(\d{1,}\s*\/\s*\d{1,}).*$"),
             new Regex(@"^.*(справ.*)|(помо.*).*$"),
         };
-
+        //Массив из делегатов. Используется для выбора делегата для ответа на сообщение. Делегат — это тип,
+        //который представляет ссылки на методы с определенным списком параметров и типом возвращаемого значения. 
         static AnswerDelegate[] answerDelegates = new AnswerDelegate[]
         {
             hello,
@@ -469,6 +474,7 @@ namespace CBAPI_NS
             div,
             help,
         };
+        //Обработчик сообщения. В ответ на сообщение возвращает сообщение
         public static Message processMessage(Message message)
         {
             // Инициализация ответа
@@ -489,7 +495,7 @@ namespace CBAPI_NS
                 // Проверка, подходит ли regex
                 if (regexes[i].Match(lowerContent).Success)
                 {
-                    // Вызов делегата и возврат результата
+                    // Вызов делегата и возврат результата при нахождении совпадения
                     Message result_messsage = answerDelegates[i].Invoke(message);
                     result = result_messsage;
                     messageStory.Add(result);
